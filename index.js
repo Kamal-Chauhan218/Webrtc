@@ -1,11 +1,16 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const { Server } = require("socket.io");
-const PORT = process.env.PORT || 8000;
+const http = require("http");
 
-const io = new Server(PORT, {
-  cors: true,
+const { Server } = require("socket.io");
+const httpServer = http.createServer(app);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // Update this for production to specific frontend origin
+    methods: ["GET", "POST"],
+  },
 });
 
 const emailToSocketIdMap = new Map();
