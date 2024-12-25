@@ -1,4 +1,6 @@
 require("dotenv").config();
+const express = require("express");
+const app = express();
 const { Server } = require("socket.io");
 const PORT = process.env.PORT || 8000;
 
@@ -8,6 +10,10 @@ const io = new Server(PORT, {
 
 const emailToSocketIdMap = new Map();
 const socketidToEmailMap = new Map();
+
+app.use("/", (req, res) => {
+  res.send("server is running ");
+});
 
 io.on("connection", (socket) => {
   console.log(`Socket Connected`, socket.id);
