@@ -1,17 +1,19 @@
 require("dotenv").config();
 const express = require("express");
-const app = express();
 const http = require("http");
-
 const { Server } = require("socket.io");
+
+const app = express();
+const PORT = process.env.PORT || 8000;
+
+// Create an HTTP server
 const httpServer = http.createServer(app);
 
+// Attach Socket.IO to the HTTP server
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://webrtc-main.vercel.app", // Frontend origin
+    origin: "*", // Update this for production to specific frontend origin
     methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
-    credentials: true,
   },
 });
 
