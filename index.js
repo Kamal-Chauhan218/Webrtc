@@ -1,20 +1,26 @@
 require("dotenv").config();
 const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-
 const app = express();
-const PORT = process.env.PORT || 8000;
+const http = require("http");
 
-// Create an HTTP server
+const { Server } = require("socket.io");
 const httpServer = http.createServer(app);
 
-// Attach Socket.IO to the HTTP server
+const allowedOrigins = [
+  "https://webrtc-main.vercel.app",
+  "http://localhost:3000",
+];
+
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://webrtc-main.vercel.app", // Frontend origin
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
 });
@@ -22,15 +28,12 @@ const io = new Server(httpServer, {
 const emailToSocketIdMap = new Map();
 const socketidToEmailMap = new Map();
 
-// Express route
-app.get("/", (req, res) => {
-  res.send("Server is running");
+app.use("/", (req, res) => {
+  res.send("server is running ");
 });
 
-// Socket.IO connection
 io.on("connection", (socket) => {
   console.log(`Socket Connected`, socket.id);
-
   socket.on("room:join", (data) => {
     const { email, room } = data;
     emailToSocketIdMap.set(email, socket.id);
@@ -57,16 +60,4 @@ io.on("connection", (socket) => {
     console.log("peer:nego:done", ans);
     io.to(to).emit("peer:nego:final", { from: socket.id, ans });
   });
-
-  socket.on("disconnect", () => {
-    console.log(`Socket disconnected: ${socket.id}`);
-    const email = socketidToEmailMap.get(socket.id);
-    emailToSocketIdMap.delete(email);
-    socketidToEmailMap.delete(socket.id);
-  });
-});
-
-// Start the server
-httpServer.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
 });
