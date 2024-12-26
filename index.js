@@ -4,24 +4,11 @@ const app = express();
 const http = require("http");
 
 const { Server } = require("socket.io");
-const httpServer = http.createServer(app);
-
-const allowedOrigins = [
-  "https://webrtc-main.vercel.app",
-  "http://localhost:3000",
-];
-
-const io = new Server(httpServer, {
+const io = new Server(8000, {
   cors: {
-    origin: (origin, callback) => {
-      if (allowedOrigins.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: ["https://webrtc-main.vercel.app", "http://localhost:3000"], // Frontend URLs
     methods: ["GET", "POST"],
-    credentials: true,
+    credentials: true, // Enable if cookies or authentication tokens are needed
   },
 });
 
