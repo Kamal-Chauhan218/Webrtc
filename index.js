@@ -16,6 +16,7 @@ const io = new Server(httpServer, {
       "https://webrtc-eta-eight.vercel.app",
       "https://webrtc-goog.onrender.com",
       "https://webrtc-main.vercel.app",
+      "https://webrtcmain.onrender.com",
     ], // Update this for production to specific frontend origin
     methods: ["GET", "POST"],
     credentials: true,
