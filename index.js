@@ -4,11 +4,14 @@ const app = express();
 const http = require("http");
 
 const { Server } = require("socket.io");
-const io = new Server(8000, {
+const httpServer = http.createServer(app);
+
+const io = new Server(httpServer, {
   cors: {
-    origin: ["https://webrtc-main.vercel.app", "http://localhost:3000"], // Frontend URLs
+    origin: "https://webrtc-main.vercel.app", // Frontend origin
     methods: ["GET", "POST"],
-    credentials: true, // Enable if cookies or authentication tokens are needed
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
   },
 });
 
