@@ -12,8 +12,10 @@ const httpServer = http.createServer(app);
 // Attach Socket.IO to the HTTP server
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", // Update this for production to specific frontend origin
+    origin: "https://webrtc-main.vercel.app", // Frontend origin
     methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
   },
 });
 
